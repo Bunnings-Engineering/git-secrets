@@ -2,9 +2,6 @@
 
 Prevents you from committing passwords and other sensitive information to a git repository.
 
-* TOC
-{:toc}
-
 ## Synopsis
 
     git secrets --scan [-r|--recursive] [--cached] [--no-index] [--untracked] [<files>...]
@@ -408,7 +405,7 @@ git hook and allow you to make the commit or merge.
 
 ## Contributors
 
-- Author: [Neeraj Singh] (https://github.com/nsingh-bunnings)
+- Author: [Neeraj Singh](https://github.com/nsingh-bunnings)
 - This project is inspired from git-secrets from AWS.
 - Issue tracker: This project's source code and issue tracker can be found at
   <https://github.com/awslabs/git-secrets>
