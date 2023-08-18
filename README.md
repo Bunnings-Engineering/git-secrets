@@ -1,16 +1,13 @@
 ===========
-git-secrets
+# git-secrets
 ===========
 
 ---
 
 ## Prevents you from committing passwords and other sensitive information to a git repository.
 
-.. contents:: :depth: 2
 
 ## Synopsis
-
-::
 
     git secrets --scan [-r|--recursive] [--cached] [--no-index] [--untracked] [<files>...]
     git secrets --scan-history
@@ -19,6 +16,7 @@ git-secrets
     git secrets --add [-a|--allowed] [-l|--literal] [--global] <pattern>
     git secrets --add-provider [--global] <command> [arguments...]
     git secrets --register-azure [--global]
+
 
 ## Description
 
@@ -33,42 +31,31 @@ rejected.
 `git-secrets` must be placed somewhere in your PATH so that it is picked up
 by `git` when running `git secrets`.
 
-\*nix (Linux/macOS)
-
-```
+* nix (Linux/macOS)
 
 You can use the ``install`` target of the provided Makefile to install ``git secrets`` and the man page.
 You can customize the install path using the PREFIX and MANPREFIX variables.
 
-::
-
     make install
 
-Windows
-~~~~~~~
+* Windows
 
 Run the provided ``install.ps1`` powershell script. This will copy the needed files
 to an installation directory (``%USERPROFILE%/.git-secrets`` by default) and add
 the directory to the current user ``PATH``.
 
-::
-
     PS > ./install.ps1
 
-Homebrew (for macOS users)
-```
-
-::
+* Homebrew (for macOS users)
 
     brew install git-secrets
 
-.. warning::
+### warning
 
-    **You're not done yet! You MUST install the git hooks for every repo that
-    you wish to use with** ``git secrets --install``.
+**You're not done yet! You MUST install the git hooks for every repo that you wish to use with** ``git secrets --install``.
 
 Here's a quick example of how to ensure a git repository is scanned for secrets
-on each commit::
+on each commit.
 
     cd /path/to/my/repo
     git secrets --install
@@ -76,23 +63,19 @@ on each commit::
 
 ## Advanced configuration
 
+---
+
 Add a configuration template if you want to add hooks to all repositories you
 initialize or clone in the future.
-
-::
 
     git secrets --register-azure --global
 
 Add hooks to all your local repositories.
 
-::
-
     git secrets --install ~/.git-templates/git-secrets
     git config --global init.templateDir ~/.git-templates/git-secrets
 
 Add custom providers to scan for security credentials.
-
-::
 
     git secrets --add-provider -- cat /path/to/secret/file/patterns
 
@@ -100,15 +83,11 @@ Add custom providers to scan for security credentials.
 
 With git-secrets is also possible to scan a repository including all revisions:
 
-::
-
     git secrets --scan-history
 
 ## Options
 
 Operation Modes
-
-```
 
 Each of these options must appear first on the command line.
 
@@ -152,8 +131,7 @@ Each of these options must appear first on the command line.
     Secret provider which scans files for Google Cloud Platform's (GCP's) crentials JSON files.
 
 
-Options for ``--install``
-```
+### Options for ``--install``
 
 `-f, --force`
 Overwrites existing hooks if present.
@@ -162,42 +140,39 @@ Overwrites existing hooks if present.
 When provided, installs git hooks to the given directory. The current
 directory is assumed if `<target-directory>` is not provided.
 
-    If the provided ``<target-directory>`` is not in a git repository, the
-    directory will be created and hooks will be placed in
-    ``<target-directory>/hooks``. This can be useful for creating git template
-    directories using with ``git init --template <target-directory>``.
+If the provided ``<target-directory>`` is not in a git repository, the
+directory will be created and hooks will be placed in
+``<target-directory>/hooks``. This can be useful for creating git template
+directories using with ``git init --template <target-directory>``.
 
-    You can run ``git init`` on a repository that has already been initialized.
-    From the `git init documentation <https://git-scm.com/docs/git-init>`_:
+You can run ``git init`` on a repository that has already been initialized.
+From the `git init documentation <https://git-scm.com/docs/git-init>`_:
 
-        From the git documentation: Running ``git init`` in an existing repository
-        is safe. It will not overwrite things that are already there. The
-        primary reason for rerunning ``git init`` is to pick up newly added
-        templates (or to move the repository to another place if
-        ``--separate-git-dir`` is given).
+> From the git documentation: Running ``git init`` in an existing repository
+> is safe. It will not overwrite things that are already there. The
+> primary reason for rerunning ``git init`` is to pick up newly added
+> templates (or to move the repository to another place if
+> ``--separate-git-dir`` is given).
 
-    The following git hooks are installed:
+The following git hooks are installed:
+1. ``pre-commit``: Used to check if any of the files changed in the commit
+   use prohibited patterns.
+2. ``commit-msg``: Used to determine if a commit message contains a
+   prohibited patterns.
+3. ``prepare-commit-msg``: Used to determine if a merge commit will
+   introduce a history that contains a prohibited pattern at any point.
+   Please note that this hook is only invoked for non fast-forward merges.
 
-    1. ``pre-commit``: Used to check if any of the files changed in the commit
-       use prohibited patterns.
-    2. ``commit-msg``: Used to determine if a commit message contains a
-       prohibited patterns.
-    3. ``prepare-commit-msg``: Used to determine if a merge commit will
-       introduce a history that contains a prohibited pattern at any point.
-       Please note that this hook is only invoked for non fast-forward merges.
+#### Note
+Git only allows a single script to be executed per hook. If the
+repository contains Debian-style subdirectories like ``pre-commit.d``
+and ``commit-msg.d``, then the git hooks will be installed into these
+directories, which assumes that you've configured the corresponding
+hooks to execute all of the scripts found in these directories. If
+these git subdirectories are not present, then the git hooks will be
+installed to the git repo's ``.git/hooks`` directory.
 
-    .. note::
-
-        Git only allows a single script to be executed per hook. If the
-        repository contains Debian-style subdirectories like ``pre-commit.d``
-        and ``commit-msg.d``, then the git hooks will be installed into these
-        directories, which assumes that you've configured the corresponding
-        hooks to execute all of the scripts found in these directories. If
-        these git subdirectories are not present, then the git hooks will be
-        installed to the git repo's ``.git/hooks`` directory.
-
-Examples
-^^^^^^^^
+**Examples**
 
 Install git hooks to the current directory::
 
@@ -218,37 +193,32 @@ Overwrite existing hooks if present::
 
     git secrets --install -f
 
-Options for `--scan`
-
-```
+### Options for `--scan`
 
 ``-r, --recursive``
-    Scans the given files recursively. If a directory is encountered, the
-    directory will be scanned. If ``-r`` is not provided, directories will be
-    ignored.
-
-    ``-r`` cannot be used alongside ``--cached``, ``--no-index``, or
-    ``--untracked``.
+Scans the given files recursively. If a directory is encountered, the
+directory will be scanned. If ``-r`` is not provided, directories will be
+ignored.
+``-r`` cannot be used alongside ``--cached``, ``--no-index``, or
+``--untracked``.
 
 ``--cached``
-    Searches blobs registered in the index file.
+Searches blobs registered in the index file.
 
 ``--no-index``
-    Searches files in the current directory that is not managed by git.
+Searches files in the current directory that is not managed by git.
 
 ``--untracked``
-    In addition to searching in the tracked files in the working tree,
-    ``--scan`` also in untracked files.
+In addition to searching in the tracked files in the working tree,
+``--scan`` also in untracked files.
 
 ``<files>...``
-    The path to one or more files on disk to scan for secrets.
+The path to one or more files on disk to scan for secrets.
+If no files are provided, all files returned by ``git ls-files`` are
+scanned.
 
-    If no files are provided, all files returned by ``git ls-files`` are
-    scanned.
 
-
-Examples
-^^^^^^^^
+**Examples**
 
 Scan all files in the repo::
 
@@ -275,33 +245,28 @@ Scan from stdin::
     echo 'hello!' | git secrets --scan -
 
 
-Options for ``--list``
-```
+### Options for ``--list``
 
 `--global`
 Lists only git-secrets configuration in the global git config.
 
-Options for `--add`
-
-```
+### Options for `--add`
 
 ``--global``
-    Adds patterns to the global git config
+Adds patterns to the global git config
 
 ``-l, --literal``
-    Escapes special regular expression characters in the provided pattern so
-    that the pattern is searched for literally.
+Escapes special regular expression characters in the provided pattern so
+that the pattern is searched for literally.
 
 ``-a, --allowed``
-    Mark the pattern as allowed instead of prohibited. Allowed patterns are
-    used to filter out false positives.
+Mark the pattern as allowed instead of prohibited. Allowed patterns are
+used to filter out false positives.
 
 ``<pattern>``
-    The regex pattern to search.
+The regex pattern to search.
 
-
-Examples
-^^^^^^^^
+**Examples**
 
 Adds a prohibited pattern to the current repo::
 
@@ -320,8 +285,7 @@ Add an allowed pattern::
     git secrets --add -a 'allowed pattern'
 
 
-Options for ``--add-provider``
-```
+### Options for ``--add-provider``
 
 `--global`
 Adds the provider to the global git config.
@@ -331,8 +295,7 @@ Provider command to invoke. When invoked the command is expected to write
 prohibited patterns separated by new lines to stdout. Any extra arguments
 provided are passed on to the command.
 
-Examples
-^^^^^^^^
+**Examples**
 
 Registers a secret provider with arguments::
 
@@ -343,6 +306,8 @@ Cats secrets out of a file::
     git secrets --add-provider -- cat /path/to/secret/file/patterns
 
 ## Defining prohibited patterns
+
+---
 
 `egrep`-compatible regular expressions are used to determine if a commit or
 commit message contains any prohibited patterns. These regular expressions are
@@ -356,11 +321,11 @@ You can add prohibited regular expression patterns to your git config using
 
 ## Ignoring false positives
 
+---
+
 Sometimes a regular expression might match false positives. For example, git
 commit SHAs look a lot like AWS access keys. You can specify many different
 regular expression patterns as false positives using the following command:
-
-::
 
     git secrets --add --allowed 'my regex pattern'
 
@@ -379,14 +344,16 @@ are canceled out by an allowed match, then the subject text does not contain
 any secrets. If any of the matched lines are not matched by an allowed regular
 expression, then git-secrets will fail the commit/merge/message.
 
-.. important::
+**important**
 
-    Just as it is a bad practice to add prohibited patterns that are too
-    greedy, it is also a bad practice to add allowed patterns that are too
-    forgiving. Be sure to test out your patterns using ad-hoc calls to
-    ``git secrets --scan $filename`` to ensure they are working as intended.
+> Just as it is a bad practice to add prohibited patterns that are too
+> greedy, it is also a bad practice to add allowed patterns that are too
+> forgiving. Be sure to test out your patterns using ad-hoc calls to
+> ``git secrets --scan $filename`` to ensure they are working as intended.
 
 ## Example walkthrough
+
+---
 
 Let's take a look at an example. Given the following subject text (stored in
 `/tmp/example`)::
@@ -451,11 +418,15 @@ included in the subject text that allowed patterns are matched against.
 
 ## Skipping validation
 
+---
+
 Use the `--no-verify` option in the event of a false positive match in a
 commit, merge, or commit message. This will skip the execution of the
 git hook and allow you to make the commit or merge.
 
 ## Contributors
+
+---
 
 - Author: `Neeraj Singh <https://github.com/nsingh-bunnings>`\_
 - This project is inspired from git-secrets from AWS.
