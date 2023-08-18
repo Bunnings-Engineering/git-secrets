@@ -31,7 +31,6 @@ You can use the ``install`` target of the provided Makefile to install ``git sec
 You can customize the install path using the PREFIX and MANPREFIX variables.
 
     make install
-
 ### Windows
 
 Run the provided ``install.ps1`` powershell script. This will copy the needed files
@@ -39,7 +38,6 @@ to an installation directory (``%USERPROFILE%/.git-secrets`` by default) and add
 the directory to the current user ``PATH``.
 
     PS > ./install.ps1
-
 ### Homebrew (for macOS users)
 
     brew install git-secrets
@@ -84,11 +82,13 @@ Operation Modes
 Each of these options must appear first on the command line.
 
 ***``--install``***
+
 Installs git hooks for a repository. Once the hooks are installed for a git
 repository, commits and non-fast-forward merges for that repository will be prevented
 from committing secrets.
 
 ***``--scan``***
+
 Scans one or more files for secrets. When a file contains a secret, the
 matched text from the file being scanned will be written to stdout and the
 script will exit with a non-zero status. Each matched line will be written with
@@ -97,6 +97,7 @@ a colon, and then the line of text that matched. If no files are provided,
 all files returned by ``git ls-files`` are scanned.
 
 ***``--scan-history``***
+
 Scans repository including all revisions. When a file contains a secret, the
 matched text from the file being scanned will be written to stdout and the
 script will exit with a non-zero status. Each matched line will be written with
@@ -104,30 +105,37 @@ the name of the file that matched, a colon, the line number that matched,
 a colon, and then the line of text that matched.
 
 ***``--list``***
+
 Lists the ``git-secrets`` configuration for the current repo or in the global
 git config.
 
 ***``--add``***
+
 Adds a prohibited or allowed pattern.
 
 ***``--add-provider``***
+
 Registers a secret provider. Secret providers are executables that when
 invoked output prohibited patterns that ``git-secrets`` should treat as
 prohibited.
 
 ***``--register-azure``***
+
 Adds common Azure patterns to the git config and ensures that keys present
 in ``~/.azure`` are not found in any commit.
 
 ***``--register-gcp``***
+
 Secret provider which scans files for Google Cloud Platform's (GCP's) crentials JSON files.
 
 ### Options for ``--install``
 
 ***`-f, --force`***
+
 Overwrites existing hooks if present.
 
 ***`<target-directory>`***
+
 When provided, installs git hooks to the given directory. The current
 directory is assumed if `<target-directory>` is not provided.
 
@@ -187,6 +195,7 @@ Overwrite existing hooks if present:
 ### Options for `--scan`
 
 ***``-r, --recursive``***
+
 Scans the given files recursively. If a directory is encountered, the
 directory will be scanned. If ``-r`` is not provided, directories will be
 ignored.
@@ -194,16 +203,20 @@ ignored.
 ``--untracked``.
 
 ***``--cached``***
+
 Searches blobs registered in the index file.
 
 ***``--no-index``***
+
 Searches files in the current directory that is not managed by git.
 
 ***``--untracked``***
+
 In addition to searching in the tracked files in the working tree,
 ``--scan`` also in untracked files.
 
 ***``<files>...``***
+
 The path to one or more files on disk to scan for secrets.
 If no files are provided, all files returned by ``git ls-files`` are
 scanned.
@@ -239,22 +252,27 @@ Scan from stdin::
 ### Options for ``--list``
 
 ***`--global`***
+
 Lists only git-secrets configuration in the global git config.
 
 ### Options for `--add`
 
 ***``--global``***
+
 Adds patterns to the global git config
 
 ***``-l, --literal``***
+
 Escapes special regular expression characters in the provided pattern so
 that the pattern is searched for literally.
 
 ***``-a, --allowed``***
+
 Mark the pattern as allowed instead of prohibited. Allowed patterns are
 used to filter out false positives.
 
 ***``<pattern>``***
+
 The regex pattern to search.
 
 **Examples**
@@ -279,9 +297,11 @@ Add an allowed pattern::
 ### Options for ``--add-provider``
 
 ***`--global`***
+
 Adds the provider to the global git config.
 
 ***`<command>`***
+
 Provider command to invoke. When invoked the command is expected to write
 prohibited patterns separated by new lines to stdout. Any extra arguments
 provided are passed on to the command.
