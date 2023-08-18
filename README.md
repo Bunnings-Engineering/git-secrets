@@ -1,11 +1,9 @@
-===========
 # git-secrets
-===========
 
----
+Prevents you from committing passwords and other sensitive information to a git repository.
 
-## Prevents you from committing passwords and other sensitive information to a git repository.
-
+* TOC
+{:toc}
 
 ## Synopsis
 
@@ -16,7 +14,6 @@
     git secrets --add [-a|--allowed] [-l|--literal] [--global] <pattern>
     git secrets --add-provider [--global] <command> [arguments...]
     git secrets --register-azure [--global]
-
 
 ## Description
 
@@ -31,14 +28,14 @@ rejected.
 `git-secrets` must be placed somewhere in your PATH so that it is picked up
 by `git` when running `git secrets`.
 
-* nix (Linux/macOS)
+### *nix (Linux/macOS)
 
 You can use the ``install`` target of the provided Makefile to install ``git secrets`` and the man page.
 You can customize the install path using the PREFIX and MANPREFIX variables.
 
     make install
 
-* Windows
+### Windows
 
 Run the provided ``install.ps1`` powershell script. This will copy the needed files
 to an installation directory (``%USERPROFILE%/.git-secrets`` by default) and add
@@ -46,24 +43,22 @@ the directory to the current user ``PATH``.
 
     PS > ./install.ps1
 
-* Homebrew (for macOS users)
+### Homebrew (for macOS users)
 
     brew install git-secrets
 
-### warning
-
-**You're not done yet! You MUST install the git hooks for every repo that you wish to use with** ``git secrets --install``.
+**warning**
+> You're not done yet! You MUST install the git hooks for every repo that you wish 
+> to use with** ``git secrets --install``.
 
 Here's a quick example of how to ensure a git repository is scanned for secrets
 on each commit.
 
     cd /path/to/my/repo
     git secrets --install
-    git secrets --register-aws
+    git secrets --register-azure
 
 ## Advanced configuration
-
----
 
 Add a configuration template if you want to add hooks to all repositories you
 initialize or clone in the future.
@@ -91,52 +86,51 @@ Operation Modes
 
 Each of these options must appear first on the command line.
 
-``--install``
-    Installs git hooks for a repository. Once the hooks are installed for a git
-    repository, commits and non-fast-forward merges for that repository will be prevented
-    from committing secrets.
+***``--install``***
+Installs git hooks for a repository. Once the hooks are installed for a git
+repository, commits and non-fast-forward merges for that repository will be prevented
+from committing secrets.
 
-``--scan``
-    Scans one or more files for secrets. When a file contains a secret, the
-    matched text from the file being scanned will be written to stdout and the
-    script will exit with a non-zero status. Each matched line will be written with
-    the name of the file that matched, a colon, the line number that matched,
-    a colon, and then the line of text that matched. If no files are provided,
-    all files returned by ``git ls-files`` are scanned.
+***``--scan``***
+Scans one or more files for secrets. When a file contains a secret, the
+matched text from the file being scanned will be written to stdout and the
+script will exit with a non-zero status. Each matched line will be written with
+the name of the file that matched, a colon, the line number that matched,
+a colon, and then the line of text that matched. If no files are provided,
+all files returned by ``git ls-files`` are scanned.
 
-``--scan-history``
-    Scans repository including all revisions. When a file contains a secret, the
-    matched text from the file being scanned will be written to stdout and the
-    script will exit with a non-zero status. Each matched line will be written with
-    the name of the file that matched, a colon, the line number that matched,
-    a colon, and then the line of text that matched.
+***``--scan-history``***
+Scans repository including all revisions. When a file contains a secret, the
+matched text from the file being scanned will be written to stdout and the
+script will exit with a non-zero status. Each matched line will be written with
+the name of the file that matched, a colon, the line number that matched,
+a colon, and then the line of text that matched.
 
-``--list``
-    Lists the ``git-secrets`` configuration for the current repo or in the global
-    git config.
+***``--list``***
+Lists the ``git-secrets`` configuration for the current repo or in the global
+git config.
 
-``--add``
-    Adds a prohibited or allowed pattern.
+***``--add``***
+Adds a prohibited or allowed pattern.
 
-``--add-provider``
-    Registers a secret provider. Secret providers are executables that when
-    invoked output prohibited patterns that ``git-secrets`` should treat as
-    prohibited.
+***``--add-provider``***
+Registers a secret provider. Secret providers are executables that when
+invoked output prohibited patterns that ``git-secrets`` should treat as
+prohibited.
 
-``--register-azure``
-    Adds common Azure patterns to the git config and ensures that keys present
-    in ``~/.azure`` are not found in any commit.
+***``--register-azure``***
+Adds common Azure patterns to the git config and ensures that keys present
+in ``~/.azure`` are not found in any commit.
 
-``--register-gcp``
-    Secret provider which scans files for Google Cloud Platform's (GCP's) crentials JSON files.
-
+***``--register-gcp``***
+Secret provider which scans files for Google Cloud Platform's (GCP's) crentials JSON files.
 
 ### Options for ``--install``
 
-`-f, --force`
+***`-f, --force`***
 Overwrites existing hooks if present.
 
-`<target-directory>`
+***`<target-directory>`***
 When provided, installs git hooks to the given directory. The current
 directory is assumed if `<target-directory>` is not provided.
 
@@ -163,7 +157,7 @@ The following git hooks are installed:
    introduce a history that contains a prohibited pattern at any point.
    Please note that this hook is only invoked for non fast-forward merges.
 
-#### Note
+**Note**
 Git only allows a single script to be executed per hook. If the
 repository contains Debian-style subdirectories like ``pre-commit.d``
 and ``commit-msg.d``, then the git hooks will be installed into these
@@ -174,45 +168,45 @@ installed to the git repo's ``.git/hooks`` directory.
 
 **Examples**
 
-Install git hooks to the current directory::
+Install git hooks to the current directory:
 
     cd /path/to/my/repository
     git secrets --install
 
-Install git hooks to a repository other than the current directory::
+Install git hooks to a repository other than the current directory:
 
     git secrets --install /path/to/my/repository
 
 Create a git template that has `git-secrets` installed, and then copy that
-template into a git repository::
+template into a git repository:
 
     git secrets --install ~/.git-templates/git-secrets
     git init --template ~/.git-templates/git-secrets
 
-Overwrite existing hooks if present::
+Overwrite existing hooks if present:
 
     git secrets --install -f
 
 ### Options for `--scan`
 
-``-r, --recursive``
+***``-r, --recursive``***
 Scans the given files recursively. If a directory is encountered, the
 directory will be scanned. If ``-r`` is not provided, directories will be
 ignored.
 ``-r`` cannot be used alongside ``--cached``, ``--no-index``, or
 ``--untracked``.
 
-``--cached``
+***``--cached``***
 Searches blobs registered in the index file.
 
-``--no-index``
+***``--no-index``***
 Searches files in the current directory that is not managed by git.
 
-``--untracked``
+***``--untracked``***
 In addition to searching in the tracked files in the working tree,
 ``--scan`` also in untracked files.
 
-``<files>...``
+***``<files>...``***
 The path to one or more files on disk to scan for secrets.
 If no files are provided, all files returned by ``git ls-files`` are
 scanned.
@@ -247,23 +241,23 @@ Scan from stdin::
 
 ### Options for ``--list``
 
-`--global`
+***`--global`***
 Lists only git-secrets configuration in the global git config.
 
 ### Options for `--add`
 
-``--global``
+***``--global``***
 Adds patterns to the global git config
 
-``-l, --literal``
+***``-l, --literal``***
 Escapes special regular expression characters in the provided pattern so
 that the pattern is searched for literally.
 
-``-a, --allowed``
+***``-a, --allowed``***
 Mark the pattern as allowed instead of prohibited. Allowed patterns are
 used to filter out false positives.
 
-``<pattern>``
+***``<pattern>``***
 The regex pattern to search.
 
 **Examples**
@@ -287,10 +281,10 @@ Add an allowed pattern::
 
 ### Options for ``--add-provider``
 
-`--global`
+***`--global`***
 Adds the provider to the global git config.
 
-`<command>`
+***`<command>`***
 Provider command to invoke. When invoked the command is expected to write
 prohibited patterns separated by new lines to stdout. Any extra arguments
 provided are passed on to the command.
@@ -307,8 +301,6 @@ Cats secrets out of a file::
 
 ## Defining prohibited patterns
 
----
-
 `egrep`-compatible regular expressions are used to determine if a commit or
 commit message contains any prohibited patterns. These regular expressions are
 defined using the `git config` command. It is important to note that
@@ -320,8 +312,6 @@ You can add prohibited regular expression patterns to your git config using
 `git secrets --add <pattern>`.
 
 ## Ignoring false positives
-
----
 
 Sometimes a regular expression might match false positives. For example, git
 commit SHAs look a lot like AWS access keys. You can specify many different
@@ -353,8 +343,6 @@ expression, then git-secrets will fail the commit/merge/message.
 
 ## Example walkthrough
 
----
-
 Let's take a look at an example. Given the following subject text (stored in
 `/tmp/example`)::
 
@@ -365,13 +353,11 @@ Let's take a look at an example. Given the following subject text (stored in
 
 And the following registered patterns:
 
-::
-
     git secrets --add 'password\s*=\s*.+'
     git secrets --add --allowed --literal 'ex@mplepassword'
 
 Running `git secrets --scan /tmp/example`, the result will
-result in the following error output::
+result in the following error output
 
     /tmp/example:3:password=******
 
@@ -384,7 +370,7 @@ result in the following error output::
     - Use --no-verify if this is a one-time false positive
 
 Breaking this down, the prohibited pattern value of `password\s*=\s*.+` will
-match the following lines::
+match the following lines
 
     /tmp/example:2:password=ex@mplepassword
     /tmp/example:3:password=******
@@ -397,7 +383,7 @@ Because that matching lines are placed on lines that start with the filename
 and line number (e.g., `/tmp/example:3:...`), you can create allowed
 patterns that take filenames and line numbers into account in the regular
 expression. For example, you could whitelist an entire file using something
-like::
+like
 
     git secrets --add --allowed '/tmp/example:.*'
     git secrets --scan /tmp/example && echo $?
@@ -405,8 +391,6 @@ like::
 
 Alternatively, you could allow a specific line number of a file if that
 line is unlikely to change using something like the following:
-
-::
 
     git secrets --add --allowed '/tmp/example:3:.*'
     git secrets --scan /tmp/example && echo $?
@@ -418,17 +402,13 @@ included in the subject text that allowed patterns are matched against.
 
 ## Skipping validation
 
----
-
 Use the `--no-verify` option in the event of a false positive match in a
 commit, merge, or commit message. This will skip the execution of the
 git hook and allow you to make the commit or merge.
 
 ## Contributors
 
----
-
-- Author: `Neeraj Singh <https://github.com/nsingh-bunnings>`\_
+- Author: [Neeraj Singh] (https://github.com/nsingh-bunnings)
 - This project is inspired from git-secrets from AWS.
 - Issue tracker: This project's source code and issue tracker can be found at
-  `https://github.com/awslabs/git-secrets <https://github.com/awslabs/git-secrets>`\_
+  <https://github.com/awslabs/git-secrets>
